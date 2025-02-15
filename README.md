@@ -103,7 +103,10 @@ uniqueArray([1, 2, 2, 3, 4, 4]); // [1, 2, 3, 4]
 
 ### 🧠 Advanced Utilities
 ```typescript
-import { compose, pipe, retry, sleep, timeout } from 'utiliverse';
+import { compose, pipe, retry, sleep, timeout, toMorseCode } from 'utiliverse';
+
+// Text to Morse Code
+toMorseCode("kiron"); // -.- .. .-. --- -.
 
 // Compose functions
 const addThenMultiply = compose((x: number) => x * 2, (x: number) => x + 1);

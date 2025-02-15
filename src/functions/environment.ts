@@ -11,12 +11,18 @@ export const getMediaQuery = ({
   mobile = "600px",
   tablet = "768px",
   desktop = "992px",
-}: MediaQueryOptions = {}): MediaQuery => ({
-  isSmallDevice: window.matchMedia(`(max-width: ${mobile})`).matches,
-  isMediumDevice: window.matchMedia(`(max-width: ${tablet})`).matches,
-  isLargeDevice: window.matchMedia(`(max-width: ${desktop})`).matches,
-  isExtraLargeDevice: window.matchMedia(`(min-width: ${desktop})`).matches,
-});
+}: MediaQueryOptions = {}): MediaQuery => {
+  if (typeof window !== "undefined") {
+    return {
+      isSmallDevice: window.matchMedia(`(max-width: ${mobile})`).matches,
+      isMediumDevice: window.matchMedia(`(max-width: ${tablet})`).matches,
+      isLargeDevice: window.matchMedia(`(max-width: ${desktop})`).matches,
+      isExtraLargeDevice: window.matchMedia(`(min-width: ${desktop})`).matches,
+    };
+  } else {
+    throw new Error("You can't use this function on the server side");
+  }
+};
 
 export const getWindowSize = (): {
   width: number;
@@ -28,6 +34,17 @@ export const getWindowSize = (): {
       height: window.innerHeight,
     };
   } else {
-    throw new Error("Not running in browser environment");
+    throw new Error("You can't use this function on the server side");
+  }
+};
+
+export const scrollToTop = (): void => {
+  if (typeof window !== "undefined") {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  } else {
+    throw new Error("You can't use this function on the server side");
   }
 };
