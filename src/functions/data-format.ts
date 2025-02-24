@@ -2,13 +2,13 @@ import { arrayError, numberError, stringError } from "../errors";
 import { StrongPasswordOptions } from "../types";
 import { currencies } from "../utility";
 
-export function generateStrongPassword({
+export const generateStrongPassword = ({
   length = 12,
   hasUppercase = true,
   hasLowercase = true,
   hasNumber = true,
   hasSpecialChar = true,
-}: StrongPasswordOptions = {}): string {
+}: StrongPasswordOptions = {}): string => {
   const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
   const numberChars = "0123456789";
@@ -28,7 +28,7 @@ export function generateStrongPassword({
     .join("");
 
   return password;
-}
+};
 
 export const flattenArray = <T>(arr: (T | T[])[]): T[] => {
   arrayError(arr);
@@ -409,18 +409,92 @@ export const toCurrencyWords = (
 
   return `${wholePartWords} ${currencyName}${
     wholePart !== 1 ? "s" : ""
-  } and ${fractionPartWords} ${subunitName}${fractionPart !== 1 ? "s" : ""}`;
+  } and ${fractionPartWords} ${subunitName}${fractionPart > 1 ? "s" : ""}`;
 };
 
-export const toQueryString = (obj: Record<string, any>): string => {
-  if (!obj || typeof obj !== "object" || obj === null) {
-    throw new Error("Invalid input object provided.");
+export const longestWord = (sentence: string): string => {
+  stringError(sentence, "Please provide a valid sentence.");
+
+  return sentence
+    .split(" ")
+    .reduce(
+      (longest, word) => (word.length > longest.length ? word : longest),
+      "",
+    );
+};
+
+export const numberToWords = (num: number): string => {
+  numberError(num, "Please provide a valid number.");
+
+  const units = [
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+  ];
+  const teens = [
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+  ];
+  const tens = [
+    "",
+    "ten",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety",
+  ];
+  const scales = ["", "thousand", "million", "billion", "trillion"];
+
+  if (num < 10) return units[num];
+  if (num < 20) return teens[num - 10];
+  if (num < 100) {
+    const ten = Math.floor(num / 10);
+    const unit = num % 10;
+    return tens[ten] + (unit !== 0 ? `-${units[unit]}` : "");
+  }
+  if (num < 1000) {
+    const hundred = Math.floor(num / 100);
+    const remainder = num % 100;
+    return (
+      units[hundred] +
+      " hundred" +
+      (remainder !== 0 ? ` ${numberToWords(remainder)}` : "")
+    );
   }
 
-  return Object.entries(obj)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-    )
-    .join("&");
+  const groups: number[] = [];
+  let current = num;
+  while (current > 0) {
+    groups.push(current % 1000);
+    current = Math.floor(current / 1000);
+  }
+
+  const parts: string[] = [];
+  for (let i = groups.length - 1; i >= 0; i--) {
+    const group = groups[i];
+    if (group === 0) continue;
+    const part = numberToWords(group) + (scales[i] ? ` ${scales[i]}` : "");
+    parts.push(part);
+  }
+
+  return parts.join(" ");
 };

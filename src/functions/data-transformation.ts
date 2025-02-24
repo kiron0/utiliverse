@@ -50,7 +50,7 @@ export const toSlugWithUnderscore = (str: string): string => {
 };
 
 export const toMaskedEmail = (email: string): string => {
-  stringError(email, "Please input a validn email address to mask.");
+  stringError(email, "Please input a email address to mask.");
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw new Error("Invalid email address.");
@@ -62,12 +62,22 @@ export const toMaskedEmail = (email: string): string => {
 };
 
 export const fromBase64 = (base64: string): string => {
-  stringError(base64, "Please input a valid value to convert from base64.");
+  stringError(base64, "Please input a value to convert from base64.");
+
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) {
+    throw new Error("Invalid base64 string.");
+  }
+
   return Buffer.from(base64, "base64").toString("utf-8");
 };
 
 export const fromHex = (hex: string): string => {
-  stringError(hex, "Please input a valid value to convert from hex.");
+  stringError(hex, "Please input a value to convert from hex.");
+
+  if (!/^[0-9A-Fa-f]*$/.test(hex)) {
+    throw new Error("Invalid hex string.");
+  }
+
   return Buffer.from(hex, "hex").toString("utf-8");
 };
 
@@ -76,7 +86,12 @@ export const fromJSON = (json: string): unknown => {
 };
 
 export const fromCSV = (csv: string): string[][] => {
-  stringError(csv, "Please input a valid value to convert from CSV.");
+  stringError(csv, "Please input a value to convert from CSV.");
+
+  if (!csv.includes(",")) {
+    throw new Error("Invalid CSV string.");
+  }
+
   return csv.split("\n").map((row) => row.split(","));
 };
 
@@ -214,6 +229,7 @@ export const toAlternatingCase = (str: string): string => {
 
 export const toEmoji = (str: string): string => {
   stringError(str, "Please input a valid value to convert to emoji.");
+
   const emojiMap: { [key: string]: string } = {
     A: "🅰️",
     B: "🅱️",
@@ -247,4 +263,82 @@ export const toEmoji = (str: string): string => {
     .split("")
     .map((char) => emojiMap[char] || char)
     .join("");
+};
+
+export const randomHexColor = (): string => {
+  return `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, "0")}`;
+};
+
+export const toEmojiNumber = (num: number): string => {
+  numberError(num, "Please input a valid number to convert to emoji number.");
+
+  const emojiMap: Record<string, string> = {
+    "0": "0️⃣",
+    "1": "1️⃣",
+    "2": "2️⃣",
+    "3": "3️⃣",
+    "4": "4️⃣",
+    "5": "5️⃣",
+    "6": "6️⃣",
+    "7": "7️⃣",
+    "8": "8️⃣",
+    "9": "9️⃣",
+  };
+  return String(num)
+    .split("")
+    .map((digit) => emojiMap[digit] || digit)
+    .join("");
+};
+
+export const toHexColor = (r: number, g: number, b: number): string => {
+  numberError(r, "Please input a valid red value to convert to hex color.");
+  numberError(g, "Please input a valid green value to convert to hex color.");
+  numberError(b, "Please input a valid blue value to convert to hex color.");
+
+  return `#${[r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("")}`;
+};
+
+export const toRGBColor = (hex: string): string => {
+  stringError(hex, "Please input a valid hex color to convert to RGB color.");
+
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
+export const toHSLColor = (r: number, g: number, b: number): string => {
+  numberError(r, "Please input a valid red value to convert to HSL color.");
+  numberError(g, "Please input a valid green value to convert to HSL color.");
+  numberError(b, "Please input a valid blue value to convert to HSL color.");
+
+  (r /= 255), (g /= 255), (b /= 255);
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h = 0,
+    s,
+    l = (max + min) / 2;
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+  return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(
+    l * 100,
+  )}%)`;
 };

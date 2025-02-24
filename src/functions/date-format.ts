@@ -3,6 +3,7 @@ import { dateError, numberError } from "../errors";
 export const getDaysBetweenDates = (date1: Date, date2: Date): number => {
   dateError(date1, "Invalid date1 provided.");
   dateError(date2, "Invalid date2 provided.");
+
   const oneDay = 24 * 60 * 60 * 1000;
   return Math.round(Math.abs((date1.getTime() - date2.getTime()) / oneDay));
 };
@@ -249,7 +250,6 @@ export const getTimeStamp = (
   const pad = (num: number, length: number = 2): string =>
     num.toString().padStart(length, "0");
 
-  // Formatting tokens
   const replacements: { [key: string]: string } = {
     YYYY: pad(get.year, 4),
     YY: pad(get.year % 100),

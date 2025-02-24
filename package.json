@@ -1,7 +1,7 @@
 {
   "name": "utiliverse",
   "description": "A Universe of TypeScript Utilities",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -20,8 +20,17 @@
     "lint": "tsc"
   },
   "devDependencies": {
-    "@types/node": "^22.13.4",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3"
-  }
+  },
+  "keywords": [
+     "typescript",
+     "utilities",
+     "universe",
+     "typescript-utilities",
+     "tools",
+     "helpers",
+     "library",
+     "utility"
+   ]
 }

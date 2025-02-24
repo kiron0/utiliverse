@@ -226,3 +226,17 @@ export const currencies: { [code: string]: CurrencyInfo } = {
   ZMW: { name: "Zambian Kwacha", minorUnit: 2, subunit: "Ngwee" },
   ZWL: { name: "Zimbabwe Dollar", minorUnit: 2, subunit: "Cent" },
 };
+
+export const adjustKeyLength = (key: string, length: 16 | 32 = 32): string => {
+  const encoder = new TextEncoder();
+  const keyBytes = encoder.encode(key);
+
+  if (keyBytes.length < length) {
+    const paddedKey = new Uint8Array(length);
+    paddedKey.set(keyBytes);
+    return new TextDecoder().decode(paddedKey);
+  } else if (keyBytes.length > length) {
+    return new TextDecoder().decode(keyBytes.slice(0, length));
+  }
+  return key;
+};
