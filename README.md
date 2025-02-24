@@ -82,13 +82,33 @@ roundToDecimal(3.14159, 2); // 3.14
 
 ### 📜 String Utilities
 ```typescript
-import { reverseString, truncateString, toCamelCase, toKebabCase, toSnakeCase } from 'utiliverse';
+import { reverseString, truncateString, toCamelCase, toKebabCase, toSnakeCase, encryptString, decryptString } from 'utiliverse';
 
 reverseString('hello'); // "olleh"
 truncateString('This is a long string', 10); // "This is a..."
 toCamelCase('hello-world'); // "helloWorld"
 toKebabCase('helloWorld'); // "hello-world"
 toSnakeCase('helloWorld'); // "hello_world"
+
+const plainText = "Hello World!";
+const key = "YOUR_SECRET_KEY";
+
+(async () => {
+  try {
+    const encrypted = await encryptString(plainText, key);
+    console.log("Encrypted value:", encrypted);
+    // Encrypted value: ddf6d2af194f6afc075a06ebfbce1e75:9b2d2517c3ef4d91408003b22ae8ca6f
+
+    const decrypted = await decryptString(encrypted, key);
+    console.log("Decrypted value:", decrypted);
+    // Decrypted value: Hello World!
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+})();
+
 ```
 
 ### 🧩 Array Utilities
